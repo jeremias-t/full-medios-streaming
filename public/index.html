@@ -6,7 +6,6 @@
     <title>full medios</title>
 
     <link rel="stylesheet" href="./estilos/style.css" />
-    <!-- cdn de firebase -->
     <script
       defer
       src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"
@@ -33,63 +32,38 @@
       <div class="reproductor">
         <div class="contenedor-principal">
           <select id="select-streams"></select>
+          <video id="video-player" width="640" height="360" controls></video>
         </div>
       </div>
     </main>
 
     <script src="https://vjs.zencdn.net/8.9.0/video.min.js"></script>
-    <script src="/public/js/config.js"></script>
-
+    <script src="config.js"></script>
     <script>
+      // Importa la configuración de Firebase
+      import { firebaseConfig } from "./config.js";
+
+      // Inicializa Firebase
+      firebase.initializeApp(firebaseConfig);
+
+      // Obtiene el elemento del selector
       const selectStreams = document.getElementById("select-streams");
 
-      // Obtiene la lista de transmisiones
-      async function getStreams() {
-        try {
-          const streamsRef = firebase.database().ref("streams");
-          const streams = await streamsRef.get();
+      // Maneja la selección de opciones
+      selectStreams.addEventListener("change", (event) => {
+        // Obtiene la URL de la transmisión seleccionada
+        const selectedStreamUrl = event.target.value;
 
-          // Crea una lista de opciones
-          const options = streams.map((stream) => {
-            return {
-              label: stream.title,
-              value: stream.stream_url,
-            };
-          });
+        // Obtiene el elemento del reproductor
+        const videoPlayer = document.getElementById("video-player");
 
-          // Muestra la lista de opciones al usuario
-          const selectStreams = document.getElementById("select-streams");
-          selectStreams.innerHTML = "";
-          options.forEach((option) => {
-            selectStreams.appendChild(
-              document.createElement("option")
-            ).textContent = option.label;
-          });
-        } catch (error) {
-          console.error(error);
-        }
-      }
-
-      getStreams();
-
-      //----------------------------------------------------------------------------------------
-      // Obtiene el reproductor de vídeo
-      const player = document.querySelector("video");
-
-      // Agrega el botón de pausa/reanudar
-      const button = document.createElement("button");
-      button.textContent = "Pausa/Reanudar";
-      button.addEventListener("click", () => {
-        player.paused ? player.play() : player.pause();
+        // Reproduce la transmisión
+        videoPlayer.src = selectedStreamUrl;
+        videoPlayer.play();
       });
 
-      // Agrega el botón al reproductor de vídeo
-      player.appendChild(button);
-    </script>
-
-    <script type="module">
-      //configuracion firebase
-      import { firebaseConfig } from "./config.js";
+      // Obtiene la lista de transmisiones
+      getStreams();
     </script>
   </body>
 </html>

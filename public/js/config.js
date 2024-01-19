@@ -23,10 +23,24 @@ const databaseRef = database.ref();
 
 // Get the data from the database
 databaseRef.child("streams").on("value", (snapshot) => {
-  // ... Procesa los datos de la base de datos ...
+  // Procesa los datos de la base de datos
+  const streams = snapshot.val();
+
+  // Crea una lista de opciones
+  const options = streams ? streams.map((stream) => {
+    return {
+      label: stream.title,
+      value: stream.stream_url,
+    };
+  }) : [];
+
+  // Muestra la lista de opciones al usuario
+  const selectStreams = document.getElementById("select-streams");
+  selectStreams.innerHTML = "";
+  options.forEach((option) => {
+    selectStreams.appendChild(document.createElement("option")).textContent = option.label;
+  });
 });
-
-
 
 if (!app) {
   throw new Error("No se ha configurado Firebase");
