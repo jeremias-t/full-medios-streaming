@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>full medios</title>
+
+    <link rel="stylesheet" href="./estilos/style.css" />
+    <!-- cdn de firebase -->
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"
+    ></script>
+
+    <link href="https://vjs.zencdn.net/8.9.0/video-js.css" rel="stylesheet" />
+  </head>
+  <body>
+    <header>
+      <div class="contenedor">
+        <img class="logotipo" src="./img/logo.jpg" alt="logo" />
+      </div>
+    </header>
+
+    <main>
+      <div class="contenedor-principal">
+        <div class="reproductor">
+          <div id="player"></div>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://vjs.zencdn.net/8.9.0/video.min.js"></script>
+    <script src="/public/js/config.js"></script>
+
+    <script>
+            // Obtiene la lista de transmisiones
+      const streamsRef = firebase.database().ref("Full Medios/streaming");
+      const streams = await streamsRef.get();
+
+      // Crea una lista de opciones
+      const options = streams.map((stream) => {
+        return {
+          label: stream.title,
+          value: stream.stream_url,
+        };
+      });
+
+      // Muestra la lista de opciones al usuario
+      const select = document.querySelector("select");
+      select.innerHTML = "";
+      options.forEach((option) => {
+        select.appendChild(document.createElement("option")).textContent = option.label;
+      });
+
+
+      //----------------------------------------------------------------------------------------
+      // Obtiene el reproductor de vídeo
+      const player = document.querySelector("video");
+
+      // Agrega el botón de pausa/reanudar
+      const button = document.createElement("button");
+      button.textContent = "Pausa/Reanudar";
+      button.addEventListener("click", () => {
+        player.paused ? player.play() : player.pause();
+      });
+
+      // Agrega el botón al reproductor de vídeo
+      player.appendChild(button);
+    </script>
+
+    <script type="module">
+      //configuracion firebase
+      import { firebaseConfig } from "./config.js";
+    </script>
+  </body>
+</html>
