@@ -30,9 +30,9 @@
     </header>
 
     <main>
-      <div class="contenedor-principal">
-        <div class="reproductor">
-          <div id="player"></div>
+      <div class="reproductor">
+        <div class="contenedor-principal">
+          <select id="select-streams"></select>
         </div>
       </div>
     </main>
@@ -41,25 +41,36 @@
     <script src="/public/js/config.js"></script>
 
     <script>
-            // Obtiene la lista de transmisiones
-      const streamsRef = firebase.database().ref("Full Medios/streaming");
-      const streams = await streamsRef.get();
+      const selectStreams = document.getElementById("select-streams");
 
-      // Crea una lista de opciones
-      const options = streams.map((stream) => {
-        return {
-          label: stream.title,
-          value: stream.stream_url,
-        };
-      });
+      // Obtiene la lista de transmisiones
+      async function getStreams() {
+        try {
+          const streamsRef = firebase.database().ref("streams");
+          const streams = await streamsRef.get();
 
-      // Muestra la lista de opciones al usuario
-      const select = document.querySelector("select");
-      select.innerHTML = "";
-      options.forEach((option) => {
-        select.appendChild(document.createElement("option")).textContent = option.label;
-      });
+          // Crea una lista de opciones
+          const options = streams.map((stream) => {
+            return {
+              label: stream.title,
+              value: stream.stream_url,
+            };
+          });
 
+          // Muestra la lista de opciones al usuario
+          const selectStreams = document.getElementById("select-streams");
+          selectStreams.innerHTML = "";
+          options.forEach((option) => {
+            selectStreams.appendChild(
+              document.createElement("option")
+            ).textContent = option.label;
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      getStreams();
 
       //----------------------------------------------------------------------------------------
       // Obtiene el reproductor de vídeo
